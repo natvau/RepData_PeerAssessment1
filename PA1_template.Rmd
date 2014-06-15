@@ -1,13 +1,17 @@
 # Reproducible Research: Peer Assessment 1
 
-
+setwd('~/Desktop/coursera/data specialization/5.Reproducible Research/project1/')
 ## Loading and preprocessing the data
-
-
+```{r}
+data <- read.csv("activity.csv")
+````
 
 ## What is mean total number of steps taken per day?
-
-
+```{r}
+split <- split(data, data$date)
+mean <- lapply(X=split, FUN=function(x) mean(na.omit(x$steps)))
+median <- lapply(X=split, FUN=function(x) median(na.omit(x$steps)))
+````
 
 ## What is the average daily activity pattern?
 
