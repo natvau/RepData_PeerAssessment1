@@ -9,14 +9,24 @@ data <- read.csv("activity.csv")
 ## What is mean total number of steps taken per day?
 ```{r}
 split <- split(data, data$date)
+total_steps <- sapply(X=split, FUN=function(x) sum(na.omit(x$steps)))
+library(lattice)
+histogram(total_steps)
 mean <- lapply(X=split, FUN=function(x) mean(na.omit(x$steps)))
+mean
 median <- lapply(X=split, FUN=function(x) median(na.omit(x$steps)))
+median
 ````
 
 ## What is the average daily activity pattern?
+Sorry I couldn't finished on time
+```{r}
+data2 <- data[data$interval==5,]
 
-
-
+max_num_steps <- which(data2 == max(na.omit(data2$steps)))
+max_num_steps
+data2[max_num_steps,]
+````
 ## Imputing missing values
 
 
