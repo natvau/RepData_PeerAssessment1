@@ -31,8 +31,9 @@ The mean is `r mean` and the median is `r median`.
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```{r}
-meanInterval <- sapply(X = unique(data$interval), function(x) mean(data[data$interval==x,'steps'], na.rm = TRUE))
-names(meanInterval) <- unique(data$interval)
+intervals <- unique(data$interval)
+meanInterval <- sapply(X = intervals, function(x) mean(data[data$interval==x,'steps'], na.rm = TRUE))
+names(meanInterval) <- intervals
 plot(names(meanInterval), meanInterval, type="l", ylab="Average number of steps", xlab="Interval")
 ````
 
@@ -76,3 +77,21 @@ The mean is `r mean` and the median is `r median`. This values differ from the f
 
 
 #### Are there differences in activity patterns between weekdays and weekends?
+Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+```{r}
+data$day = factor(labels = c("weekday", "weekend"), weekdays(data$date) == "Sunday" | weekdays(data$date) == "Saturday")
+````
+Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was creating using simulated data:
+
+```{r}
+intervals <- unique(data$interval)
+meanIntervalWeekday <- sapply(X = intervals, function(x) mean(data[c(data$interval==x, data$day=="weekday"),'steps'], na.rm = TRUE))
+meanIntervalWeekend <- sapply(X = intervals, function(x) mean(data[c(data$interval==x, data$day=="weekend"),'steps'], na.rm = TRUE))
+names(meanIntervalWeekday) = names(meanIntervalWeekend) <- intervals
+par(mfrow=c(2,1))
+plot(names(meanIntervalWeekday), meanInterval, type="l", ylab="Average number of steps", xlab="Interval", main = "Weekday")
+plot(names(meanIntervalWeekend), meanInterval, type="l", ylab="Average number of steps", xlab="Interval", main = "Weekend")
+
+require(ggplot2)
+qplot(trans.factor, casp6)
+````
