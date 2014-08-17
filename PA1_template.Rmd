@@ -88,11 +88,13 @@ dataWday <- data[data$day=="weekday",]
 intervals <- unique(dataWday$interval)
 meanInterval <- sapply(X = intervals, function(x) mean(dataWday[dataWday$interval==x,'steps'], na.rm = TRUE))
 names(meanInterval) <- intervals
-par(mfrow=c(2,1))
-plot(names(meanInterval), meanInterval, type="l", ylab="Average number of steps", xlab="Interval", main="Weekday")
+data2 = data.frame(mean = meanInterval, interval = intervals, day='weekday')
+
 dataWend <- data[data$day=="weekend",]
 intervals <- unique(dataWend$interval)
 meanInterval <- sapply(X = intervals, function(x) mean(dataWend[dataWend$interval==x,'steps'], na.rm = TRUE))
 names(meanInterval) <- intervals
-plot(names(meanInterval), meanInterval, type="l", ylab="Average number of steps", xlab="Interval", main="Weekend")
+data2 = rbind(data2, data.frame(mean = meanInterval, interval = intervals, day='weekend'))
+require(lattice)
+xyplot(data2$mean ~ data2$interval | data2$day, layout = c(1,2), type = "l", ylab="Number of steps", xlab = "Interval")
 ````
