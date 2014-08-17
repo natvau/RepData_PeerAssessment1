@@ -1,7 +1,15 @@
 # Reproducible Research: Peer Assessment 1
 
-setwd('~/Desktop/coursera/data specialization/5.Reproducible Research/project1/')
+## Set your working directory
+```{r}
+setwd("~/Desktop/nat/otros estudios/coursera/data specialization/5.Reproducible Research/project1/RepData_PeerAssessment1")
+````
+## Download data
+
+FALTA
+
 ## Loading and preprocessing the data
+
 ```{r}
 data <- read.csv("activity.csv", colClasses = c("numeric", "Date", "numeric"))
 ````
@@ -11,9 +19,9 @@ data <- read.csv("activity.csv", colClasses = c("numeric", "Date", "numeric"))
 ```{r}
 split <- split(data, data$date)
 total_steps <- sapply(X=split, FUN=function(x) sum(na.omit(x$steps)))
-library(lattice)
-histogram(total_steps)
+hist(total_steps, col='blue', xlab = "Total Number of Steps")
 ````
+
 ### Calculate and report the **mean** and **median** total number of steps taken per day
 ```{r}
 steps <- sapply(X=split, FUN=function(x) sum(na.omit(x$steps)))
@@ -21,18 +29,35 @@ mean <- mean(steps, na.rm=TRUE)
 median <- median(steps, na.rm=TRUE)
 ````
 The mean is `r mean` and the median is `r median`.
+
 ## What is the average daily activity pattern?
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
-Sorry I couldn't finished on time
 ```{r}
-
-max_num_steps <- which(data2 == max(na.omit(data2$steps)))
-max_num_steps
-data2[max_num_steps,]
+meanInterval <- sapply(X = unique(data$interval), function(x) mean(data[data$interval==x,'steps'], na.rm = TRUE))
+plot(unique(data$interval), meanInterval, type="l", ylab="Average number of steps", xlab="Interval")
 ````
+
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+```{r}
+max <- unique(data$interval)[which(meanInterval==max(meanInterval))]
+````
+Answer: `r max`.
+
 ## Imputing missing values
+
+Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+```{r}
+missing <- nrow(data[is.na(data$steps),])
+````
+
+
+Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
 
 
 
