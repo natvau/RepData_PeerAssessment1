@@ -1,28 +1,25 @@
-# Reproducible Research: Peer Assessment 1
+## Reproducible Research: Peer Assessment 1
 
-## Set your working directory
+### Set your working directory
 ```{r}
 setwd("~/Desktop/nat/otros estudios/coursera/data specialization/5.Reproducible Research/project1/RepData_PeerAssessment1")
 ````
-## Download data
 
-FALTA
-
-## Loading and preprocessing the data
+### Loading and preprocessing the data
 
 ```{r}
 data <- read.csv("activity.csv", colClasses = c("numeric", "Date", "numeric"))
 ````
 
-## What is mean total number of steps taken per day?
-### Make a histogram of the total number of steps taken each day
+### What is mean total number of steps taken per day?
+#### Make a histogram of the total number of steps taken each day
 ```{r}
 split <- split(data, data$date)
 total_steps <- sapply(X=split, FUN=function(x) sum(na.omit(x$steps)))
 hist(total_steps, col='blue', xlab = "Total Number of Steps")
 ````
 
-### Calculate and report the **mean** and **median** total number of steps taken per day
+#### Calculate and report the **mean** and **median** total number of steps taken per day
 ```{r}
 steps <- sapply(X=split, FUN=function(x) sum(na.omit(x$steps)))
 mean <- mean(steps, na.rm=TRUE)
@@ -30,12 +27,13 @@ median <- median(steps, na.rm=TRUE)
 ````
 The mean is `r mean` and the median is `r median`.
 
-## What is the average daily activity pattern?
+### What is the average daily activity pattern?
 1. Make a time series plot (i.e. `type = "l"`) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 ```{r}
 meanInterval <- sapply(X = unique(data$interval), function(x) mean(data[data$interval==x,'steps'], na.rm = TRUE))
-plot(unique(data$interval), meanInterval, type="l", ylab="Average number of steps", xlab="Interval")
+names(meanInterval) <- unique(data$interval)
+plot(names(meanInterval), meanInterval, type="l", ylab="Average number of steps", xlab="Interval")
 ````
 
 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
@@ -44,21 +42,37 @@ max <- unique(data$interval)[which(meanInterval==max(meanInterval))]
 ````
 Answer: `r max`.
 
-## Imputing missing values
+### Imputing missing values
 
 Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 ```{r}
-missing <- nrow(data[is.na(data$steps),])
+missing <- nrow(data[is.na(data),])
 ````
 
-
-Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+My strategy for filling in all of the missing values in the dataset: the mean for that 5-minute interval.
+```{r}
+filling_NA <- sapply(data[is.na(data$steps), 'interval'], function(x) meanInterval[which(names(meanInterval) == x)])
+````
 
 Create a new dataset that is equal to the original dataset but with the missing data filled in.
+```{r}
+data[is.na(data$steps), 'steps'] <- filling_NA
+````
 
 Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+```{r}
+split <- split(data, data$date)
+total_steps <- sapply(X=split, FUN=function(x) sum(na.omit(x$steps)))
+hist(total_steps, col='blue', xlab = "Total Number of Steps")
+
+steps <- sapply(X=split, FUN=function(x) sum(na.omit(x$steps)))
+mean <- mean(steps, na.rm=TRUE)
+median <- median(steps, na.rm=TRUE)
+````
+```{r, echo=FALSE, floating=TRUE}
+na_percent <- nrow(data[is.na(data$steps),])/nrow(data)*100
+```
+The mean is `r mean` and the median is `r median`. This values differ from the first part ones because there are about 13% of NA values, and when you replace them you are duplicating some of the other values. The impact on the estimates is that it equals them and also it increases them both, because you are adding the mean value. If I have added a random value according to the interval instead of its mean, then the numbers shouldn't have changed much. The overall impact is that it normalizes the sample.
 
 
-
-
-## Are there differences in activity patterns between weekdays and weekends?
+#### Are there differences in activity patterns between weekdays and weekends?
