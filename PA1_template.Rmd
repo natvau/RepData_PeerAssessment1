@@ -1,14 +1,15 @@
 ## Reproducible Research: Peer Assessment 1
 
-### Set your working directory
-```{r}
-setwd("~/Desktop/nat/otros estudios/coursera/data specialization/5.Reproducible Research/project1/RepData_PeerAssessment1")
-````
-
 ### Loading and preprocessing the data
 
 ```{r}
-data <- read.csv("activity.csv", colClasses = c("numeric", "Date", "numeric"))
+fname = "activity.zip"
+source_url = "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2Factivity.zip"
+if(!file.exists(fname)) {
+    download.file(source_url, destfile=fname, method="curl")
+}
+con <- unz(fname, "activity.csv")
+data <- read.csv(con, colClasses = c("numeric", "Date", "numeric"))
 ````
 
 ### What is mean total number of steps taken per day?
